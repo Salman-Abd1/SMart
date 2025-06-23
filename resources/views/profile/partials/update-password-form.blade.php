@@ -1,11 +1,11 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-yellow-900 dark:text-gray-100">
-            {{ __('Update Password') }}
+        <h2 class="text-lg font-medium text-black dark:text-black">
+            {{ __('Perbarui Kata Sandi') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+        <p class="mt-1 text-sm text-black dark:text-black">
+            {{ __('Pastikan akun Anda menggunakan kata sandi yang panjang dan acak untuk menjaga keamanan.') }}
         </p>
     </header>
 
@@ -14,28 +14,25 @@
         @method('put')
 
         <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+            <x-input-label for="update_password_current_password" :value="'Kata Sandi Saat Ini'" class="text-black dark:text-black" />
+            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full text-black" autocomplete="current-password" />
+            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2 text-danger" />
         </div>
 
         <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+            <x-input-label for="update_password_password" :value="'Kata Sandi Baru'" class="text-black dark:text-black" />
+            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full text-black" autocomplete="new-password" />
+            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2 text-danger" />
         </div>
 
         <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+            <x-input-label for="update_password_password_confirmation" :value="'Konfirmasi Kata Sandi'" class="text-black dark:text-black" />
+            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full text-black" autocomplete="new-password" />
+            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2 text-danger" />
         </div>
 
         <div class="flex items-center gap-4">
-            <button type="submit" class="btn btn-success">Save</button>
-
-
-            {{-- Status sukses --}}
+            <button type="submit" class="btn btn-success">Simpan</button>
 
             @if (session('status') === 'password-updated')
                 <p
@@ -43,8 +40,8 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
+                    class="text-sm text-black dark:text-black"
+                >{{ __('Kata sandi berhasil diperbarui.') }}</p>
             @endif
         </div>
     </form>

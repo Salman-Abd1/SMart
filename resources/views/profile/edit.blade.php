@@ -29,7 +29,7 @@
 
     {{-- Form Hapus Akun --}}
     <div class="card mb-4 border-danger">
-        <div class="card-header text-danger">Hapus Akun</div>
+        <div class="card-header text-white">Hapus Akun</div>
         <div class="card-body text-white">
             @include('profile.partials.delete-user-form')
         </div>
