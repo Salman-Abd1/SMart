@@ -4,7 +4,6 @@
             {{ __('Informasi Profil') }}
         </h2>
 
-
         <p class="mt-1 text-sm text-black dark:text-black">
             {{ __("Perbarui informasi profil dan alamat email akun Anda.") }}
         </p>

@@ -90,7 +90,7 @@
     <div class="login-container">
         <div class="login-header">
             <div class="logo"><i class="fas fa-boxes"></i></div>
-            <h1 class="login-title">StockMaster</h1>
+            <h1 class="login-title">Smart Mart</h1>
             <p class="login-subtitle">Sistem Manajemen Stok Barang</p>
         </div>
 
