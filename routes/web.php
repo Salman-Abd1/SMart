@@ -39,6 +39,8 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:pemilik'])->group(function () {
+    Route::resource('barangs', BarangController::class);
+    Route::resource('transaksis', TransaksiController::class);
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 
