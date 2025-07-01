@@ -30,19 +30,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('barangs', BarangController::class);
-});
-
-Route::middleware(['auth', 'role:kasir'])->group(function () {
-    Route::resource('transaksis', TransaksiController::class);
-});
-
-Route::middleware(['auth', 'role:pemilik'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('barangs', BarangController::class);
     Route::resource('transaksis', TransaksiController::class);
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
+
 
 
 require __DIR__.'/auth.php';
