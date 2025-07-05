@@ -174,6 +174,13 @@
                 font-size: 20px;
             }
         }
+
+        @media (min-width: 992px) {
+        .navbar .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0; /* Menghilangkan jarak atas pada menu dropdown */
+        }
+    }
     </style>
 </head>
 <body>
@@ -196,16 +203,27 @@
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->is('barangs*')) active @endif" href="{{ route('barangs.index') }}">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @if(request()->is('barangs*')) active @endif" href="#" id="navbarDropdownBarang" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-box-open"></i> Barang
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownBarang">
+                            <li><a class="dropdown-item" href="{{ route('barangs.index') }}">Daftar Barang</a></li>
+                            <li><a class="dropdown-item" href="{{ route('barangs.create') }}">Input Barang Baru</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->is('transaksis*')) active @endif" href="{{ route('transaksis.index') }}">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @if(request()->is('transaksis*')) active @endif" href="#" id="navbarDropdownTransaksi" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-exchange-alt"></i> Transaksi
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownTransaksi">
+                            <li><a class="dropdown-item" href="{{ route('transaksis.index') }}">Riwayat Transaksi</a></li>
+                            <li><a class="dropdown-item" href="{{ route('transaksis.create') }}">Input Transaksi Baru</a></li>
+                        </ul>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link @if(request()->is('laporan*')) active @endif" href="{{ route('laporan.index') }}">
                             <i class="fas fa-file-alt"></i> Laporan
