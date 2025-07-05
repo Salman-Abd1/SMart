@@ -4,7 +4,7 @@
     <h2>Tambah Barang Baru</h2>
 
     @if ($errors->any())
-        <div>
+        <div class="alert alert-danger">
             <strong>Oops!</strong> Ada kesalahan saat input:<br>
             <ul>
                 @foreach ($errors->all() as $error)
@@ -16,19 +16,27 @@
 
     <form action="{{ route('barangs.store') }}" method="POST">
         @csrf
-        <label>Nama Barang:</label><br>
-        <input type="text" name="nama_barang" value="{{ old('nama_barang') }}"><br>
+        <div class="mb-3">
+            <label class="form-label">Nama Barang:</label>
+            <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}">
+        </div>
 
-        <label>Kode Barang:</label><br>
-        <input type="text" name="kode_barang" value="{{ old('kode_barang') }}"><br>
+        <div class="mb-3">
+            <label class="form-label">Kode Barang:</label>
+            <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}">
+        </div>
 
-        <label>Stok:</label><br>
-        <input type="number" name="stok" value="{{ old('stok') }}"><br>
+        <div class="mb-3">
+            <label class="form-label">Stok:</label>
+            <input type="number" name="stok" class="form-control" value="{{ old('stok') }}">
+        </div>
 
-        <label>Harga:</label><br>
-        <input type="number" step="0.01" name="harga" value="{{ old('harga') }}"><br><br>
+        <div class="mb-3">
+            <label class="form-label">Harga:</label>
+            <input type="number" step="0.01" name="harga" class="form-control" value="{{ old('harga') }}">
+        </div>
 
-        <button type="submit">Simpan</button>
-        <a href="{{ route('barangs.index') }}">Kembali</a>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ route('barangs.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 @endsection
