@@ -8,6 +8,25 @@
         </div>
     </div>
 
+    @if($stokHampirHabis->isNotEmpty())
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Peringatan Stok Rendah!</h4>
+                    <p>Beberapa barang memiliki stok yang menipis (<= 10). Harap segera lakukan pengadaan ulang.</p>
+                    <hr>
+                    <ul class="mb-0">
+                        @foreach($stokHampirHabis as $barang)
+                            <li>
+                                <strong>{{ $barang->nama_barang }}</strong> - Sisa stok: <strong>{{ $barang->stok }}</strong> unit.
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="row mt-4">
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'pemilik')
         <div class="col-md-3 mb-3">

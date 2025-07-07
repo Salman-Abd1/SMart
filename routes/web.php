@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanController;
+use App\Models\Barang;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,7 +22,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $stokHampirHabis = Barang::where('stok', '<', 10)->get();
+    return view('dashboard', compact('stokHampirHabis')); // Kirim variabel ke view
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
