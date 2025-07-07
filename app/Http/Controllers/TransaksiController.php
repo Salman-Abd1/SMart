@@ -30,44 +30,54 @@ class TransaksiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    $request->validate([
-        'barang_id' => 'required|exists:barangs,id',
-        'jumlah' => 'required|integer|min:1',
-    ]);
+    public function store(Request $request)
+    {
+        // Validasi bahwa 'items' adalah array dan setiap elemen di dalamnya valid
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.barang_id' => 'required|exists:barangs,id',
+            'items.*.jumlah' => 'required|integer|min:1',
+        ]);
 
-    try {
-        DB::transaction(function () use ($request) {
-            $barang = Barang::findOrFail($request->barang_id);
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->items as $item) {
+                    // Pastikan barang_id dan jumlah ada sebelum diproses
+                    if (!isset($item['barang_id']) || !isset($item['jumlah'])) {
+                        continue; // Lewati item yang tidak lengkap
+                    }
 
-            if ($barang->stok < $request->jumlah) {
-                // Melempar exception akan otomatis membatalkan transaksi
-                throw new \Exception('Stok tidak cukup');
-            }
+                    $barang = Barang::findOrFail($item['barang_id']);
 
-            $total = $barang->harga * $request->jumlah;
+                    // Cek stok untuk setiap barang
+                    if ($barang->stok < $item['jumlah']) {
+                        // Melempar exception akan otomatis membatalkan seluruh transaksi
+                        throw new \Exception("Stok untuk barang '{$barang->nama_barang}' tidak cukup. Sisa stok: {$barang->stok}.");
+                    }
 
-            // Kurangi stok
-            $barang->stok -= $request->jumlah;
-            $barang->save();
+                    $total = $barang->harga * $item['jumlah'];
 
-            // Buat record transaksi
-            Transaksi::create([
-                'barang_id' => $barang->id,
-                'jumlah' => $request->jumlah,
-                'total_harga' => $total,
-            ]);
-        });
+                    // Kurangi stok
+                    $barang->stok -= $item['jumlah'];
+                    $barang->save();
 
-        return redirect()->route('transaksis.index')->with('success', 'Transaksi berhasil disimpan.');
+                    // Buat record transaksi untuk setiap item
+                    Transaksi::create([
+                        'barang_id' => $barang->id,
+                        'jumlah' => $item['jumlah'],
+                        'total_harga' => $total,
+                    ]);
+                }
+            });
 
-    } catch (\Exception $e) {
-        // Tangkap error (misalnya stok tidak cukup) dan kembalikan dengan pesan error
-        return back()->with('error', $e->getMessage())->withInput();
+            // Di dalam method store()
+        return back()->with('success', 'Transaksi berhasil disimpan.');
+
+        } catch (\Exception $e) {
+            // Tangkap error (misalnya stok tidak cukup) dan kembalikan dengan pesan error
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
-}
-
     /**
      * Display the specified resource.
      */
