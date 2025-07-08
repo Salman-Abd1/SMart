@@ -8,16 +8,16 @@ use Illuminate\Http\Request;
 class BarangController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar semua barang.
      */
     public function index()
     {
-        $barangs = Barang::all();
+        $barangs = Barang::latest()->get(); // Urutkan dari yang terbaru
         return view('barangs.index', compact('barangs'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form untuk membuat barang baru.
      */
     public function create()
     {
@@ -25,62 +25,58 @@ class BarangController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan barang baru ke database.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'nama_barang' => 'required',
-            'kode_barang' => 'required|unique:barangs',
+            'nama_barang' => 'required|string|max:255',
+            'kode_barang' => 'required|string|unique:barangs,kode_barang',
             'stok' => 'required|integer',
+            'minimal_stok' => 'required|integer',
             'harga' => 'required|numeric',
-            'tanggal_kadaluarsa' => 'nullable|date', // Tambah validasi
+            'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
-        Barang::create($request->all()); // Langsung gunakan all() karena sudah aman dengan $fillable
+        Barang::create($request->all());
 
-        return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
+        return redirect()->route('barangs.index')->with('success', 'Barang baru berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Barang $barang)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
+     * Menampilkan form untuk mengedit barang. (BARU)
      */
     public function edit(Barang $barang)
     {
-        //
+        return view('barangs.edit', compact('barang'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui data barang di database. (BARU)
      */
     public function update(Request $request, Barang $barang)
     {
         $request->validate([
-            'nama_barang' => 'required',
-            'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
+            'nama_barang' => 'required|string|max:255',
+            'kode_barang' => 'required|string|unique:barangs,kode_barang,' . $barang->id,
             'stok' => 'required|integer',
+            'minimal_stok' => 'required|integer',
             'harga' => 'required|numeric',
             'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
         $barang->update($request->all());
 
-        return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui.');
+        return redirect()->route('barangs.index')->with('success', 'Data barang berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus barang dari database. (BARU)
      */
     public function destroy(Barang $barang)
     {
-        //
+        $barang->delete();
+
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus.');
     }
 }
