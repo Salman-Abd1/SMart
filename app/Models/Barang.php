@@ -9,13 +9,12 @@ class Barang extends Model
 {
     use HasFactory;
 
-    // app/Models/Barang.php
 protected $fillable = [
     'nama_barang',
     'kode_barang',
     'stok',
-    'minimal_stok', // Tambahkan ini
+    'minimal_stok',
     'harga',
-    'tanggal_kadaluarsa', // Tambahkan ini
+    'tanggal_kadaluarsa',
 ];
 }

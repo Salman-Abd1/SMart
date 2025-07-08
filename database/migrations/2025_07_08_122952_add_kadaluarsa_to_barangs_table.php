@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barangs', function (Blueprint $table) {
-            // Tambahkan kolom setelah kolom 'harga'
             $table->date('tanggal_kadaluarsa')->nullable()->after('harga');
             $table->integer('minimal_stok')->default(10)->after('stok');
         });

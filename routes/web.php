@@ -6,7 +6,6 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DashboardController;
-use App\Models\Barang;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,7 +21,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index']) // <-- UBAH BARIS INI
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
