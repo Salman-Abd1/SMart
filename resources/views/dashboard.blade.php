@@ -27,6 +27,28 @@
         </div>
     @endif
 
+    @if($barangAkanKadaluarsa->isNotEmpty())
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading"><i class="fas fa-calendar-times me-2"></i>Peringatan Barang Akan Kadaluarsa!</h4>
+                    <p>Sistem mendeteksi beberapa barang yang akan atau sudah melewati tanggal kadaluarsa. Segera periksa dan lakukan tindakan.</p>
+                    <hr>
+                    <ul class="mb-0">
+                        @foreach($barangAkanKadaluarsa as $barang)
+                            <li>
+                                <strong>{{ $barang->nama_barang }}</strong> -
+                                Akan kadaluarsa pada:
+                                <strong>{{ \Carbon\Carbon::parse($barang->tanggal_kadaluarsa)->format('d F Y') }}</strong>
+                                ({{ \Carbon\Carbon::parse($barang->tanggal_kadaluarsa)->diffForHumans() }}).
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="row mt-4">
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'pemilik')
         <div class="col-md-3 mb-3">
