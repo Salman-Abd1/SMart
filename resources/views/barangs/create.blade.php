@@ -36,6 +36,11 @@
             <input type="number" step="0.01" name="harga" class="form-control" value="{{ old('harga') }}">
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Tanggal Kadaluarsa:</label>
+            <input type="date" name="tanggal_kadaluarsa" class="form-control" value="{{ old('tanggal_kadaluarsa') }}">
+        </div>
+
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{{ route('barangs.index') }}" class="btn btn-secondary">Kembali</a>
     </form>

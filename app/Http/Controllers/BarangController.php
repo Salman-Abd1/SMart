@@ -30,17 +30,16 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'nama_barang' => 'required',
-        'kode_barang' => 'required|unique:barangs',
-        'stok' => 'required|integer',
-        'harga' => 'required|numeric',
-    ]);
+            'nama_barang' => 'required',
+            'kode_barang' => 'required|unique:barangs',
+            'stok' => 'required|integer',
+            'harga' => 'required|numeric',
+            'tanggal_kadaluarsa' => 'nullable|date', // Tambah validasi
+        ]);
 
-    Barang::create($request->only(['nama_barang', 'kode_barang', 'stok', 'harga']));
-    // Redirect to the index page with a success message
+        Barang::create($request->all()); // Langsung gunakan all() karena sudah aman dengan $fillable
 
-    return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
-
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
     }
 
     /**
@@ -64,7 +63,17 @@ class BarangController extends Controller
      */
     public function update(Request $request, Barang $barang)
     {
-        //
+        $request->validate([
+            'nama_barang' => 'required',
+            'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
+            'stok' => 'required|integer',
+            'harga' => 'required|numeric',
+            'tanggal_kadaluarsa' => 'nullable|date',
+        ]);
+
+        $barang->update($request->all());
+
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui.');
     }
 
     /**

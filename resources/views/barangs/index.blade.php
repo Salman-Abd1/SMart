@@ -5,16 +5,19 @@
     <a href="{{ route('barangs.create') }}" class="btn btn-primary mb-3">Tambah Barang</a>
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kode</th>
-                    <th>Stok</th>
-                    <th>Harga</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Kode</th>
+                <th>Stok</th>
+                <th>Harga</th>
+                <th>Tgl Kadaluarsa</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+
             <tbody>
                 @foreach ($barangs as $key => $barang)
                     <tr>
@@ -24,12 +27,9 @@
                         <td>{{ $barang->stok }}</td>
                         <td>Rp {{ number_format($barang->harga, 0, ',', '.') }}</td>
                         <td>
-                            <a href="{{ route('barangs.edit', $barang->id) }}" class="btn btn-sm btn-info">Edit</a>
-                            <form action="{{ route('barangs.destroy', $barang->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus barang ini?')">Hapus</button>
-                            </form>
+                            {{ $barang->tanggal_kadaluarsa ? \Carbon\Carbon::parse($barang->tanggal_kadaluarsa)->format('d-m-Y') : '-' }}
+                        </td>
+                        <td>
                         </td>
                     </tr>
                 @endforeach

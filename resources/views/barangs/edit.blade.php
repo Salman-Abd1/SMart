@@ -30,6 +30,9 @@
         <label>Harga:</label><br>
         <input type="number" step="0.01" name="harga" value="{{ old('harga', $barang->harga) }}"><br><br>
 
+        <label>Tanggal Kadaluarsa:</label><br>
+        <input type="date" name="tanggal_kadaluarsa" value="{{ old('tanggal_kadaluarsa', $barang->tanggal_kadaluarsa) }}"><br><br>
+
         <button type="submit">Update</button>
         <a href="{{ route('barangs.index') }}">Kembali</a>
     </form>

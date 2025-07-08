@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('app:cek-stok-harian')->dailyAt('08:00');
+        $schedule->command('app:cek-kadaluarsa-harian')->dailyAt('07:00'); // Jalan setiap jam 7 pagi
     }
 
     /**
