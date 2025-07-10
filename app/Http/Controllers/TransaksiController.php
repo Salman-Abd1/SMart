@@ -41,41 +41,50 @@ class TransaksiController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                foreach ($request->items as $item) {
-                    // Pastikan barang_id dan jumlah ada sebelum diproses
-                    if (!isset($item['barang_id']) || !isset($item['jumlah'])) {
-                        continue; // Lewati item yang tidak lengkap
-                    }
+                foreach ($request->items as $itemData) {
+                    $barang = Barang::findOrFail($itemData['id']);
+                    $oldStock = $barang->stok; // Simpan stok lama
 
-                    $barang = Barang::findOrFail($item['barang_id']);
+                    // ... cek stok ...
 
-                    // Cek stok untuk setiap barang
-                    if ($barang->stok < $item['jumlah']) {
-                        // Melempar exception akan otomatis membatalkan seluruh transaksi
-                        throw new \Exception("Stok untuk barang '{$barang->nama_barang}' tidak cukup. Sisa stok: {$barang->stok}.");
-                    }
+                    $total = $barang->harga * $itemData['quantity'];
+                    $changeQuantity = -$itemData['quantity']; // Perubahan negatif karena keluar
 
-                    $total = $barang->harga * $item['jumlah'];
-
-                    // Kurangi stok
-                    $barang->stok -= $item['jumlah'];
+                    $barang->stok += $changeQuantity; // Stok baru
                     $barang->save();
 
-                    // Buat record transaksi untuk setiap item
-                    Transaksi::create([
+                    // CATAT PERUBAHAN STOK
+                    \App\Models\StockHistory::create([
                         'barang_id' => $barang->id,
-                        'jumlah' => $item['jumlah'],
+                        'user_id' => auth()->id(), // User yang sedang login
+                        'old_stock' => $oldStock,
+                        'new_stock' => $barang->stok,
+                        'change_quantity' => $changeQuantity,
+                        'reason' => 'Penjualan',
+                        'reference_type' => \App\Models\Transaksi::class, // Opsional: Tipe model referensi
+                        'reference_id' => null, // Akan diisi setelah Transaksi dibuat jika Transaksi ID diperlukan
+                    ]);
+
+                    // Buat record transaksi
+                    $transaksi = Transaksi::create([ // Simpan ke variabel untuk mendapatkan ID
+                        'barang_id' => $barang->id,
+                        'jumlah' => $itemData['quantity'],
                         'total_harga' => $total,
                     ]);
+
+                    // Update reference_id di StockHistory jika diperlukan
+                    \App\Models\StockHistory::where('barang_id', $barang->id)
+                                            ->where('user_id', auth()->id())
+                                            ->where('reason', 'Penjualan')
+                                            ->latest() // Ambil yang terakhir dibuat
+                                            ->first()
+                                            ->update(['reference_id' => $transaksi->id]);
                 }
             });
 
-            // Di dalam method store()
-        return back()->with('success', 'Transaksi berhasil disimpan.');
-
+            // ... return success ...
         } catch (\Exception $e) {
-            // Tangkap error (misalnya stok tidak cukup) dan kembalikan dengan pesan error
-            return back()->with('error', $e->getMessage())->withInput();
+            // ... return error ...
         }
     }
     /**

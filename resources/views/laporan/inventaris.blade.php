@@ -36,7 +36,7 @@
                     </tr>
                 @endforelse
             </tbody>
-            <tfoot class="table-dark">
+            <tfoot class="table-success-subtle">
                 <tr>
                     <th colspan="5" class="text-end">Total Nilai Keseluruhan Inventaris:</th>
                     <th>Rp {{ number_format($totalNilaiInventaris, 0, ',', '.') }}</th>

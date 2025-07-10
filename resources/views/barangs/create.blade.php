@@ -49,7 +49,7 @@
             <input type="date" name="tanggal_kadaluarsa" class="form-control" value="{{ old('tanggal_kadaluarsa') }}">
         </div>
 
-        <button type="submit" class="btn btn-primary">Simpan</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Simpan</button>
         <a href="{{ route('barangs.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 @endsection

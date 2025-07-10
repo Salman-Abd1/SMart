@@ -30,19 +30,30 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'kode_barang' => 'required|string|unique:barangs,kode_barang',
-            'stok' => 'required|integer',
-            'minimal_stok' => 'required|integer',
+            'nama_barang' => 'required',
+            'kode_barang' => 'required|unique:barangs',
+            'stok' => 'required|integer|min:0', // Stok bisa 0 saat awal
             'harga' => 'required|numeric',
-            'tanggal_kadaluarsa' => 'nullable|date',
+            'minimal_stok' => 'required|integer|min:0', // Kolom baru
+            'tanggal_kadaluarsa' => 'nullable|date', // Kolom baru
         ]);
 
-        Barang::create($request->all());
+        $barang = Barang::create($request->only([
+            'nama_barang', 'kode_barang', 'stok', 'harga', 'minimal_stok', 'tanggal_kadaluarsa'
+        ]));
 
-        return redirect()->route('barangs.index')->with('success', 'Barang baru berhasil ditambahkan.');
+        // CATAT PERUBAHAN STOK (Stok awal)
+        \App\Models\StockHistory::create([
+            'barang_id' => $barang->id,
+            'user_id' => auth()->id(),
+            'old_stock' => 0, // Stok awal biasanya 0 sebelum diisi
+            'new_stock' => $barang->stok,
+            'change_quantity' => $barang->stok,
+            'reason' => 'Penerimaan Awal / Input Barang Baru',
+        ]);
+
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
     }
-
     /**
      * Menampilkan form untuk mengedit barang. (BARU)
      */
@@ -57,17 +68,34 @@ class BarangController extends Controller
     public function update(Request $request, Barang $barang)
     {
         $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'kode_barang' => 'required|string|unique:barangs,kode_barang,' . $barang->id,
-            'stok' => 'required|integer',
-            'minimal_stok' => 'required|integer',
+            'nama_barang' => 'required',
+            'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
+            'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric',
+            'minimal_stok' => 'required|integer|min:0',
             'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
-        $barang->update($request->all());
+        $oldStock = $barang->stok; // Simpan stok lama
+        $changeQuantity = $request->stok - $oldStock; // Hitung perubahan
 
-        return redirect()->route('barangs.index')->with('success', 'Data barang berhasil diperbarui.');
+        $barang->update($request->only([
+            'nama_barang', 'kode_barang', 'stok', 'harga', 'minimal_stok', 'tanggal_kadaluarsa'
+        ]));
+
+        // CATAT PERUBAHAN STOK (Penyesuaian manual)
+        if ($changeQuantity !== 0) { // Hanya catat jika ada perubahan stok
+            \App\Models\StockHistory::create([
+                'barang_id' => $barang->id,
+                'user_id' => auth()->id(),
+                'old_stock' => $oldStock,
+                'new_stock' => $barang->stok,
+                'change_quantity' => $changeQuantity,
+                'reason' => 'Penyesuaian Manual',
+            ]);
+        }
+
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui.');
     }
 
     /**

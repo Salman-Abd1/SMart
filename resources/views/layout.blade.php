@@ -233,7 +233,16 @@
                             <li><a class="dropdown-item" href="{{ route('laporan.inventaris') }}">Laporan Inventaris</a></li> {{-- <-- TAMBAHKAN INI --}}
                         </ul>
                     </li>
+                    @if(Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'pemilik'))
+                <li class="nav-item">
+                    <a class="nav-link @if(request()->is('stock-history*')) active @endif" href="{{ route('stock_history.index') }}">
+                        <i class="fas fa-history"></i> Riwayat Stok
+                    </a>
+                </li>
+                @endif
+            
                 </ul>
+
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
