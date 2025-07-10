@@ -18,22 +18,30 @@
         @csrf
         <div class="mb-3">
             <label class="form-label">Nama Barang:</label>
-            <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}">
+            <input type="text" name="nama_barang" class="form-control" value="{{ old('nama_barang') }}" required>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Kode Barang:</label>
-            <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}">
+            <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Stok:</label>
-            <input type="number" name="stok" class="form-control" value="{{ old('stok') }}">
+        {{-- PERUBAHAN DI SINI: Stok dan Stok Minimal dibuat berdampingan --}}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Stok Awal:</label>
+                <input type="number" name="stok" class="form-control" value="{{ old('stok') }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Stok Minimal (untuk notifikasi):</label>
+                <input type="number" name="minimal_stok" class="form-control" value="{{ old('minimal_stok', 10) }}" required>
+            </div>
         </div>
+        {{-- AKHIR PERUBAHAN --}}
 
         <div class="mb-3">
             <label class="form-label">Harga:</label>
-            <input type="number" step="0.01" name="harga" class="form-control" value="{{ old('harga') }}">
+            <input type="number" step="0.01" name="harga" class="form-control" value="{{ old('harga') }}" required>
         </div>
 
         <div class="mb-3">
