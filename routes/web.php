@@ -30,9 +30,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+// Grup Rute Khusus untuk Admin dan Pemilik (Mengelola Barang)
+Route::middleware(['auth', 'role:admin,pemilik'])->group(function () { // Hanya admin dan pemilik
     Route::resource('barangs', BarangController::class);
+});
+
+// Grup Rute Khusus untuk Kasir dan Pemilik (Mengelola Transaksi)
+Route::middleware(['auth', 'role:kasir,pemilik'])->group(function () { // Hanya kasir dan pemilik
     Route::resource('transaksis', TransaksiController::class);
+});
+
+// Grup Rute Khusus untuk Pemilik (Mengelola Laporan)
+Route::middleware(['auth', 'role:pemilik'])->group(function () { // Hanya pemilik
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 

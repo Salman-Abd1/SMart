@@ -50,7 +50,7 @@
     @endif
 
     <div class="row mt-4">
-        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'pemilik')
+        @if(Auth::user()->role === 'admin')
         <div class="col-md-3 mb-3">
             <a href="{{ route('barangs.index') }}" class="text-decoration-none">
                 <div class="card border-primary shadow-sm h-100">
@@ -73,7 +73,7 @@
         </div>
         @endif
 
-        @if(Auth::user()->role === 'kasir' || Auth::user()->role === 'pemilik')
+        @if(Auth::user()->role === 'kasir')
         <div class="col-md-3 mb-3">
             <a href="{{ route('transaksis.index') }}" class="text-decoration-none">
                 <div class="card border-success shadow-sm h-100">
