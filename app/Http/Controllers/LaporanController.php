@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Barang;
 use App\Models\Transaksi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -54,5 +55,14 @@ class LaporanController extends Controller
         // --- Akhir Data Grafik ---
 
         return view('laporan.index', compact('transaksis', 'total', 'labels', 'data'));
+    }
+        public function inventaris()
+    {
+        $barangs = Barang::orderBy('nama_barang', 'asc')->paginate(50);
+
+        // Hitung total nilai inventaris (Harga Beli * Stok)
+        $totalNilaiInventaris = Barang::sum(DB::raw('harga * stok'));
+
+        return view('laporan.inventaris', compact('barangs', 'totalNilaiInventaris'));
     }
 }

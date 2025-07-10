@@ -224,10 +224,14 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->is('laporan*')) active @endif" href="{{ route('laporan.index') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @if(request()->is('laporan*')) active @endif" href="#" id="navbarDropdownLaporan" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-file-alt"></i> Laporan
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownLaporan">
+                            <li><a class="dropdown-item" href="{{ route('laporan.index') }}">Laporan Penjualan</a></li>
+                            <li><a class="dropdown-item" href="{{ route('laporan.inventaris') }}">Laporan Inventaris</a></li> {{-- <-- TAMBAHKAN INI --}}
+                        </ul>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
