@@ -203,6 +203,7 @@
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
                     </li>
+
                     @if(Auth::check() && (Auth::user()->role === 'admin'))
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle @if(request()->is('barangs*')) active @endif" href="#" id="navbarDropdownBarang" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -213,7 +214,17 @@
                             <li><a class="dropdown-item" href="{{ route('barangs.create') }}">Input Barang Baru</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @if(request()->is('incoming-transactions*')) active @endif" href="#" id="navbarDropdownIncoming" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-dolly-flatbed"></i> Transaksi Masuk
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownIncoming">
+                            <li><a class="dropdown-item" href="{{ route('incoming_transactions.index') }}">Daftar Transaksi Masuk</a></li>
+                            <li><a class="dropdown-item" href="{{ route('incoming_transactions.create') }}">Input Transaksi Masuk Baru</a></li>
+                        </ul>
+                    </li>
                     @endif
+
                     @if(Auth::check() && (Auth::user()->role === 'kasir'))
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle @if(request()->is('transaksis*')) active @endif" href="#" id="navbarDropdownTransaksi" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -225,6 +236,7 @@
                         </ul>
                     </li>
                     @endif
+
                     @if(Auth::check() && (Auth::user()->role === 'pemilik'))
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle @if(request()->is('laporan*')) active @endif" href="#" id="navbarDropdownLaporan" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -235,8 +247,6 @@
                             <li><a class="dropdown-item" href="{{ route('laporan.inventaris') }}">Laporan Inventaris</a></li> {{-- <-- TAMBAHKAN INI --}}
                         </ul>
                     </li>
-                    @endif
-                    @if(Auth::check() && (Auth::user()->role === 'pemilik'))
                     <li class="nav-item">
                         <a class="nav-link @if(request()->is('stock-history*')) active @endif" href="{{ route('stock_history.index') }}">
                             <i class="fas fa-history"></i> Riwayat Stok
