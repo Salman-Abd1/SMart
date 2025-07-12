@@ -35,31 +35,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () { // Hanya admin da
     Route::resource('barangs', BarangController::class);
 });
 
-Route::middleware(['auth', 'role:pemilik'])->group(function () { // Hanya admin dan pemilik
-    Route::resource('barangs', BarangController::class);
-});
 
 Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::resource('transaksis', TransaksiController::class);
 });
 
-Route::middleware(['auth', 'role:pemilik'])->group(function () {
-    Route::resource('transaksis', TransaksiController::class);
-});
+
 
 Route::middleware(['auth', 'role:pemilik'])->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/inventaris', [LaporanController::class, 'inventaris'])->name('laporan.inventaris');
-});
-
-Route::middleware(['auth', 'role:admin,pemilik'])->group(function () {
-    Route::resource('barangs', BarangController::class);
     Route::get('/stock-history', [StockHistoryController::class, 'index'])->name('stock_history.index');
 });
 
-Route::middleware(['auth', 'role:pemilik'])->group(function () {
-    Route::resource('barangs', BarangController::class);
-    Route::get('/stock-history', [StockHistoryController::class, 'index'])->name('stock_history.index');
-});
+
+
 
 require __DIR__.'/auth.php';
