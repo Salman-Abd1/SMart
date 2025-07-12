@@ -13,7 +13,7 @@
             <div class="col-12">
                 <div class="alert alert-warning">
                     <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Peringatan Stok Rendah!</h4>
-                    <p>Beberapa barang memiliki stok yang menipis (<= 10). Harap segera lakukan pengadaan ulang.</p>
+                    <p>Beberapa barang memiliki stok yang menipis (kurang dari 10 unit). Harap segera lakukan pengadaan ulang.</p>
                     <hr>
                     <ul class="mb-0">
                         @foreach($stokHampirHabis as $barang)
@@ -51,7 +51,7 @@
 
     <div class="row mt-4">
         @if(Auth::user()->role === 'admin')
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('barangs.index') }}" class="text-decoration-none">
                 <div class="card border-primary shadow-sm h-100">
                     <div class="card-body text-center text-primary">
@@ -61,7 +61,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('barangs.create') }}" class="text-decoration-none">
                 <div class="card border-info shadow-sm h-100">
                     <div class="card-body text-center text-info">
@@ -74,7 +74,7 @@
         @endif
 
         @if(Auth::user()->role === 'kasir')
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('transaksis.index') }}" class="text-decoration-none">
                 <div class="card border-success shadow-sm h-100">
                     <div class="card-body text-center text-success">
@@ -84,7 +84,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('transaksis.create') }}" class="text-decoration-none">
                 <div class="card border-warning shadow-sm h-100">
                     <div class="card-body text-center text-warning">
@@ -97,7 +97,7 @@
         @endif
 
         @if(Auth::user()->role === 'pemilik')
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('laporan.index') }}" class="text-decoration-none">
                 <div class="card border-danger shadow-sm h-100">
                     <div class="card-body text-center text-danger">
@@ -107,7 +107,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('laporan.inventaris') }}" class="text-decoration-none"> {{-- Menautkan ke rute laporan inventaris baru --}}
                 <div class="card border-primary shadow-sm h-100">
                     <div class="card-body text-center text-primary">
@@ -117,7 +117,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <a href="{{ route('stock_history.index') }}" class="text-decoration-none">
                 <div class="card border-info shadow-sm h-100">
                     <div class="card-body text-center text-info">
