@@ -164,8 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.classList.contains('jumlah-input')) {
             validateStock(e.target.closest('.item-row'));
         }
-        // Juga panggil toggleAddItemButton untuk setiap input/perubahan
-        // karena status tombol "tambah" bergantung pada validitas input terakhir
         toggleAddItemButton();
     });
 

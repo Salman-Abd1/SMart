@@ -10,29 +10,28 @@ use Illuminate\Http\Request;
 class TransaksiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan riwayat transaksi penjualan.
      */
     public function index()
     {
-        $transaksis = Transaksi::with('barang')->latest()->get();
+        $transaksis = Transaksi::with('barang')->latest()->paginate(50);
         return view('transaksis.index', compact('transaksis'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form untuk membuat transaksi penjualan baru.
      */
     public function create()
     {
-        $barangs = Barang::all();
+        $barangs = Barang::orderBy('nama_barang')->get();
         return view('transaksis.create', compact('barangs'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan transaksi penjualan dan mengurangi stok.
      */
     public function store(Request $request)
     {
-        // Validasi bahwa 'items' adalah array dan setiap elemen di dalamnya valid
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.barang_id' => 'required|exists:barangs,id',
@@ -41,81 +40,81 @@ class TransaksiController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                foreach ($request->items as $itemData) {
-                    $barang = Barang::findOrFail($itemData['id']);
-                    $oldStock = $barang->stok; // Simpan stok lama
+                foreach ($request->items as $item) {
+                    if (!isset($item['barang_id']) || !isset($item['jumlah'])) {
+                        continue;
+                    }
 
-                    // ... cek stok ...
+                    $barang = Barang::findOrFail($item['barang_id']);
 
-                    $total = $barang->harga * $itemData['quantity'];
-                    $changeQuantity = -$itemData['quantity']; // Perubahan negatif karena keluar
+                    if ($barang->stok < $item['jumlah']) {
+                        throw new \Exception("Stok untuk barang '{$barang->nama_barang}' tidak cukup.");
+                    }
 
-                    $barang->stok += $changeQuantity; // Stok baru
+                    $total = $barang->harga * $item['jumlah'];
+
+                    $barang->stok -= $item['jumlah'];
                     $barang->save();
 
-                    // CATAT PERUBAHAN STOK
-                    \App\Models\StockHistory::create([
+                    // Membuat catatan di tabel transaksi
+                    Transaksi::create([
                         'barang_id' => $barang->id,
-                        'user_id' => auth()->id(), // User yang sedang login
-                        'old_stock' => $oldStock,
-                        'new_stock' => $barang->stok,
-                        'change_quantity' => $changeQuantity,
-                        'reason' => 'Penjualan',
-                        'reference_type' => \App\Models\Transaksi::class, // Opsional: Tipe model referensi
-                        'reference_id' => null, // Akan diisi setelah Transaksi dibuat jika Transaksi ID diperlukan
-                    ]);
-
-                    // Buat record transaksi
-                    $transaksi = Transaksi::create([ // Simpan ke variabel untuk mendapatkan ID
-                        'barang_id' => $barang->id,
-                        'jumlah' => $itemData['quantity'],
+                        'jumlah' => $item['jumlah'],
                         'total_harga' => $total,
                     ]);
-
-                    // Update reference_id di StockHistory jika diperlukan
-                    \App\Models\StockHistory::where('barang_id', $barang->id)
-                                            ->where('user_id', auth()->id())
-                                            ->where('reason', 'Penjualan')
-                                            ->latest() // Ambil yang terakhir dibuat
-                                            ->first()
-                                            ->update(['reference_id' => $transaksi->id]);
                 }
             });
 
-            // ... return success ...
+            return back()->with('success', 'Transaksi berhasil disimpan.');
+
         } catch (\Exception $e) {
-            // ... return error ...
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
+
     /**
-     * Display the specified resource.
+     * Menampilkan form untuk mencatat pembelian barang (stok masuk).
      */
-    public function show(Transaksi $transaksi)
+    public function createPembelian()
     {
-        //
+        $barangs = Barang::orderBy('nama_barang')->get();
+        return view('pembelian.create', compact('barangs'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menyimpan data pembelian dan menambah stok barang.
      */
-    public function edit(Transaksi $transaksi)
+    public function storePembelian(Request $request)
     {
-        //
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.barang_id' => 'required|exists:barangs,id',
+            'items.*.jumlah' => 'required|integer|min:1',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->items as $item) {
+                    if (!isset($item['barang_id']) || !isset($item['jumlah'])) {
+                        continue;
+                    }
+
+                    $barang = Barang::findOrFail($item['barang_id']);
+
+                    $barang->stok += $item['jumlah'];
+                    $barang->save();
+                }
+            });
+
+            return back()->with('success', 'Data pembelian berhasil disimpan dan stok telah diperbarui.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transaksi $transaksi)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaksi $transaksi)
-    {
-        //
-    }
+    public function show(Transaksi $transaksi) {}
+    public function edit(Transaksi $transaksi) {}
+    public function update(Request $request, Transaksi $transaksi) {}
+    public function destroy(Transaksi $transaksi) {}
 }
