@@ -20,7 +20,7 @@
             </div>
         @endif
 
-        <div class="card shadow-sm mb-4">
+        <div class="shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">Informasi Umum Transaksi</h4>
             </div>
@@ -41,10 +41,10 @@
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Daftar Barang Masuk</h4>
-            </div>
+
+
+            <h4 class="mb-0">Daftar Barang Masuk</h4>
+            <hr class="mb-4">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
@@ -83,7 +83,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+
 
         <a href="{{ route('incoming_transactions.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-2"></i>Kembali ke Daftar Transaksi Masuk

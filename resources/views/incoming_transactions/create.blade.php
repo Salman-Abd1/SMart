@@ -32,7 +32,7 @@
         <form action="{{ route('incoming_transactions.store') }}" method="POST">
             @csrf
 
-
+            <div class="shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Informasi Transaksi</h4>
                 </div>
@@ -52,6 +52,7 @@
                         <textarea name="notes" id="notes" class="form-control" rows="3">{{ old('notes') }}</textarea>
                     </div>
                 </div>
+            </div>
 
 
                 <div class="card-header bg-primary text-white">

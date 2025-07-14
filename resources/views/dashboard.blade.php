@@ -71,6 +71,26 @@
                 </div>
             </a>
         </div>
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('incoming_transactions.index') }}" class="text-decoration-none">
+                <div class="card border-success shadow-sm h-100">
+                    <div class="card-body text-center text-success">
+                        <i class="fas fa-dolly-flatbed fa-2x mb-2"></i>
+                        <h5 class="card-title">Daftar Transaksi Masuk</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('incoming_transactions.create') }}" class="text-decoration-none">
+                <div class="card border-warning shadow-sm h-100">
+                    <div class="card-body text-center text-warning">
+                        <i class="fas fa-truck-loading fa-2x mb-2"></i>
+                        <h5 class="card-title">Input Transaksi Masuk</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
         @endif
 
         @if(Auth::user()->role === 'kasir')
