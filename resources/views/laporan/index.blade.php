@@ -2,7 +2,12 @@
 
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Laporan Penjualan</h2>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="mb-4">Laporan Penjualan</h2>
+        <a href="{{ route('laporan.export', request()->query()) }}" class="btn btn-success mb-4">
+            <i class="fas fa-file-excel me-2"></i>Ekspor ke CSV
+        </a>
+    </div>
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -40,12 +45,14 @@
             <i class="fas fa-chart-line me-2"></i>Grafik Penjualan (30 Hari Terakhir)
         </div>
         <div class="card-body">
-            <canvas id="grafikPenjualan"></canvas>
+            {{-- Penyesuaian agar grafik memiliki tinggi yang pas --}}
+            <div style="height: 400px;">
+                <canvas id="grafikPenjualan"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="table-responsive">
-        {{-- Mengubah kelas tabel agar konsisten dengan yang lain --}}
         <table class="table table-bordered table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -79,26 +86,24 @@
             Total Penjualan (Sesuai Filter): Rp {{ number_format($total, 0, ',', '.') }}
         </div>
         <div>
-            {{-- Menampilkan link Paginasi --}}
             {{ $transaksis->links() }}
         </div>
     </div>
 </div>
 @endsection
 
-{{-- Mendorong script Chart.js ke layout utama --}}
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('grafikPenjualan').getContext('2d');
         const grafikPenjualan = new Chart(ctx, {
-            type: 'line', // Tipe grafik: line, bar, dll.
+            type: 'line',
             data: {
-                labels: @json($labels), // Label tanggal dari controller
+                labels: @json($labels),
                 datasets: [{
                     label: 'Total Penjualan',
-                    data: @json($data), // Data penjualan dari controller
+                    data: @json($data),
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     borderColor: 'rgba(74, 144, 226, 1)',
                     borderWidth: 2,
@@ -108,6 +113,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false, 
                 scales: {
                     y: {
                         beginAtZero: true

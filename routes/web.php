@@ -47,6 +47,7 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 Route::middleware(['auth', 'role:pemilik'])->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/inventaris', [LaporanController::class, 'inventaris'])->name('laporan.inventaris');
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     Route::get('/stock-history', [StockHistoryController::class, 'index'])->name('stock_history.index');
 });
 
