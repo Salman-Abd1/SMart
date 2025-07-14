@@ -30,6 +30,15 @@ class LaporanController extends Controller
             }
         }
 
+        // --- Filter Rentang Tanggal Kustom (BARU) ---
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->start_date)->startOfDay();
+            $endDate = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        // --- Akhir Filter Rentang Tanggal Kustom ---
+
+
         // Ambil data transaksi dengan paginasi (50 data per halaman)
         $transaksis = $query->paginate(50)->withQueryString();
 

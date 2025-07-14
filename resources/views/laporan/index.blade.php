@@ -7,8 +7,8 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('laporan.index') }}" method="GET" class="row g-3 align-items-center">
-                <div class="col-md-4">
-                    <label for="periode" class="form-label">Filter Berdasarkan Periode:</label>
+                <div class="col-md-3">
+                    <label for="periode" class="form-label">Filter Cepat:</label>
                     <select name="periode" id="periode" class="form-select" onchange="this.form.submit()">
                         <option value="">Semua Waktu</option>
                         <option value="harian" {{ request('periode') == 'harian' ? 'selected' : '' }}>Hari Ini</option>
@@ -16,9 +16,20 @@
                         <option value="bulanan" {{ request('periode') == 'bulanan' ? 'selected' : '' }}>Bulan Ini</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                 <div class="col-md-3">
+                    <label for="start_date" class="form-label">Dari Tanggal:</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="end_date" class="form-label">Hingga Tanggal:</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+                </div>
+                <div class="col-md-3">
                     <label class="form-label">&nbsp;</label>
-                    <a href="{{ route('laporan.index') }}" class="btn btn-secondary d-block">Reset Filter</a>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary flex-grow-1 me-2">Terapkan Filter</button>
+                        <a href="{{ route('laporan.index') }}" class="btn btn-secondary flex-grow-1">Reset</a>
+                    </div>
                 </div>
             </form>
         </div>
