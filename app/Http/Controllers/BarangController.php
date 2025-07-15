@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class BarangController extends Controller
@@ -12,7 +13,8 @@ class BarangController extends Controller
      */
     public function index()
     {
-        $barangs = Barang::latest()->get(); // Urutkan dari yang terbaru
+        // Menggunakan with('category') untuk eager loading
+        $barangs = Barang::with('category')->latest()->get();
         return view('barangs.index', compact('barangs'));
     }
 
@@ -21,7 +23,9 @@ class BarangController extends Controller
      */
     public function create()
     {
-        return view('barangs.create');
+        // Mengambil semua kategori untuk ditampilkan di dropdown
+        $categories = Category::orderBy('name')->get();
+        return view('barangs.create', compact('categories'));
     }
 
     /**
@@ -32,21 +36,21 @@ class BarangController extends Controller
         $request->validate([
             'nama_barang' => 'required',
             'kode_barang' => 'required|unique:barangs',
-            'stok' => 'required|integer|min:0', // Stok bisa 0 saat awal
+            'category_id' => 'required|exists:categories,id',
+            'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric',
-            'minimal_stok' => 'required|integer|min:0', // Kolom baru
-            'tanggal_kadaluarsa' => 'nullable|date', // Kolom baru
+            'minimal_stok' => 'required|integer|min:0',
+            'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
-        $barang = Barang::create($request->only([
-            'nama_barang', 'kode_barang', 'stok', 'harga', 'minimal_stok', 'tanggal_kadaluarsa'
-        ]));
+        // Menggunakan $request->all() karena semua input sudah divalidasi
+        $barang = Barang::create($request->all());
 
         // CATAT PERUBAHAN STOK (Stok awal)
         \App\Models\StockHistory::create([
             'barang_id' => $barang->id,
             'user_id' => auth()->id(),
-            'old_stock' => 0, // Stok awal biasanya 0 sebelum diisi
+            'old_stock' => 0,
             'new_stock' => $barang->stok,
             'change_quantity' => $barang->stok,
             'reason' => 'Penerimaan Awal / Input Barang Baru',
@@ -54,37 +58,40 @@ class BarangController extends Controller
 
         return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
     }
+
     /**
-     * Menampilkan form untuk mengedit barang. (BARU)
+     * Menampilkan form untuk mengedit barang.
      */
     public function edit(Barang $barang)
     {
-        return view('barangs.edit', compact('barang'));
+        // Mengambil semua kategori untuk ditampilkan di dropdown
+        $categories = Category::orderBy('name')->get();
+        return view('barangs.edit', compact('barang', 'categories'));
     }
 
     /**
-     * Memperbarui data barang di database. (BARU)
+     * Memperbarui data barang di database.
      */
     public function update(Request $request, Barang $barang)
     {
         $request->validate([
             'nama_barang' => 'required',
             'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
+            'category_id' => 'required|exists:categories,id',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric',
             'minimal_stok' => 'required|integer|min:0',
             'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
-        $oldStock = $barang->stok; // Simpan stok lama
-        $changeQuantity = $request->stok - $oldStock; // Hitung perubahan
+        $oldStock = $barang->stok;
+        $changeQuantity = $request->stok - $oldStock;
 
-        $barang->update($request->only([
-            'nama_barang', 'kode_barang', 'stok', 'harga', 'minimal_stok', 'tanggal_kadaluarsa'
-        ]));
+        // Menggunakan $request->all() untuk memperbarui semua data yang divalidasi
+        $barang->update($request->all());
 
         // CATAT PERUBAHAN STOK (Penyesuaian manual)
-        if ($changeQuantity !== 0) { // Hanya catat jika ada perubahan stok
+        if ($changeQuantity !== 0) {
             \App\Models\StockHistory::create([
                 'barang_id' => $barang->id,
                 'user_id' => auth()->id(),
@@ -99,7 +106,7 @@ class BarangController extends Controller
     }
 
     /**
-     * Menghapus barang dari database. (BARU)
+     * Menghapus barang dari database.
      */
     public function destroy(Barang $barang)
     {

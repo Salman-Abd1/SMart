@@ -16,7 +16,7 @@
 
     <form action="{{ route('barangs.update', $barang->id) }}" method="POST">
         @csrf
-        @method('PUT')  {{-- Method PUT untuk proses update --}}
+        @method('PUT')
 
         <div class="mb-3">
             <label class="form-label">Nama Barang:</label>
@@ -26,6 +26,18 @@
         <div class="mb-3">
             <label class="form-label">Kode Barang:</label>
             <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang', $barang->kode_barang) }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kategori:</label>
+            <select name="category_id" class="form-select" required>
+                <option value="">-- Pilih Kategori --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id', $barang->category_id) == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div class="row">

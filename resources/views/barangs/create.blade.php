@@ -26,7 +26,18 @@
             <input type="text" name="kode_barang" class="form-control" value="{{ old('kode_barang') }}" required>
         </div>
 
-        {{-- PERUBAHAN DI SINI: Stok dan Stok Minimal dibuat berdampingan --}}
+        <div class="mb-3">
+            <label class="form-label">Kategori:</label>
+            <select name="category_id" class="form-select" required>
+                <option value="" disabled selected>-- Pilih Kategori --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Stok Awal:</label>
@@ -37,7 +48,6 @@
                 <input type="number" name="minimal_stok" class="form-control" value="{{ old('minimal_stok', 10) }}" required>
             </div>
         </div>
-        {{-- AKHIR PERUBAHAN --}}
 
         <div class="mb-3">
             <label class="form-label">Harga:</label>
