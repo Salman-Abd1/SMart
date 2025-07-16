@@ -9,13 +9,28 @@ use Illuminate\Http\Request;
 class BarangController extends Controller
 {
     /**
-     * Menampilkan daftar semua barang.
+     * Menampilkan daftar semua barang dengan paginasi, pencarian, dan filter.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Menggunakan with('category') untuk eager loading
-        $barangs = Barang::with('category')->latest()->get();
-        return view('barangs.index', compact('barangs'));
+        $search = $request->input('search');
+        $categoryId = $request->input('category_id');
+
+        $barangs = Barang::with('category')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama_barang', 'like', "%{$search}%")
+                             ->orWhere('kode_barang', 'like', "%{$search}%");
+            })
+            ->when($categoryId, function ($query, $categoryId) {
+                return $query->where('category_id', $categoryId);
+            })
+            ->latest()
+            ->paginate(15) // Menggunakan paginasi, 15 item per halaman
+            ->withQueryString(); // Agar filter tetap ada saat pindah halaman
+
+        $categories = Category::orderBy('name')->get();
+
+        return view('barangs.index', compact('barangs', 'categories', 'search', 'categoryId'));
     }
 
     /**
@@ -23,7 +38,6 @@ class BarangController extends Controller
      */
     public function create()
     {
-        // Mengambil semua kategori untuk ditampilkan di dropdown
         $categories = Category::orderBy('name')->get();
         return view('barangs.create', compact('categories'));
     }
@@ -43,10 +57,8 @@ class BarangController extends Controller
             'tanggal_kadaluarsa' => 'nullable|date',
         ]);
 
-        // Menggunakan $request->all() karena semua input sudah divalidasi
         $barang = Barang::create($request->all());
 
-        // CATAT PERUBAHAN STOK (Stok awal)
         \App\Models\StockHistory::create([
             'barang_id' => $barang->id,
             'user_id' => auth()->id(),
@@ -64,7 +76,6 @@ class BarangController extends Controller
      */
     public function edit(Barang $barang)
     {
-        // Mengambil semua kategori untuk ditampilkan di dropdown
         $categories = Category::orderBy('name')->get();
         return view('barangs.edit', compact('barang', 'categories'));
     }
@@ -87,10 +98,8 @@ class BarangController extends Controller
         $oldStock = $barang->stok;
         $changeQuantity = $request->stok - $oldStock;
 
-        // Menggunakan $request->all() untuk memperbarui semua data yang divalidasi
         $barang->update($request->all());
 
-        // CATAT PERUBAHAN STOK (Penyesuaian manual)
         if ($changeQuantity !== 0) {
             \App\Models\StockHistory::create([
                 'barang_id' => $barang->id,
@@ -111,7 +120,6 @@ class BarangController extends Controller
     public function destroy(Barang $barang)
     {
         $barang->delete();
-
         return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus.');
     }
 }

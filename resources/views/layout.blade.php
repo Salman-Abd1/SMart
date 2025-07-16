@@ -6,6 +6,9 @@
     <title>Smart Mart @yield('title')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS untuk Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <style>
         * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -178,7 +181,7 @@
         @media (min-width: 992px) {
         .navbar .dropdown:hover .dropdown-menu {
             display: block;
-            margin-top: 0; /* Menghilangkan jarak atas pada menu dropdown */
+            margin-top: 0;
         }
     }
     </style>
@@ -244,7 +247,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownLaporan">
                             <li><a class="dropdown-item" href="{{ route('laporan.index') }}">Laporan Penjualan</a></li>
-                            <li><a class="dropdown-item" href="{{ route('laporan.inventaris') }}">Laporan Inventaris</a></li> {{-- <-- TAMBAHKAN INI --}}
+                            <li><a class="dropdown-item" href="{{ route('laporan.inventaris') }}">Laporan Inventaris</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -294,7 +297,10 @@
         </div>
     </footer>
 
+    <!-- Pustaka JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @stack('scripts')
 </body>
 </html>
