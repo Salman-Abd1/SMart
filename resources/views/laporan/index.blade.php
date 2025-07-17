@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('laporan.index') }}" method="GET" class="row g-3 align-items-center">
                 <div class="col-md-3">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="shadow-sm mb-4">
         <div class="card-header">
             <i class="fas fa-chart-line me-2"></i>Grafik Penjualan (30 Hari Terakhir)
         </div>
@@ -113,7 +113,7 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, 
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true

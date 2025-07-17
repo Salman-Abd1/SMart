@@ -43,7 +43,7 @@ class LaporanController extends Controller
 
 
         // Ambil data transaksi dengan paginasi (50 data per halaman)
-        $transaksis = $query->withQueryString()->paginate(50);
+        $transaksis = $query->paginate(50)->withQueryString();
 
         // Hitung total penjualan HANYA dari data yang difilter
         $total = (clone $query)->sum('total_harga');

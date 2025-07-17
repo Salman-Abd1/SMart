@@ -8,7 +8,7 @@
     <div class="row">
         <!-- Kolom Utama Form Transaksi -->
         <div class="col-lg-8">
-            <div class="card shadow-sm">
+            <div class="shadow-sm">
                 <div class="card-body">
                     <h4 class="card-title">Input Transaksi</h4>
                     <p class="card-subtitle mb-4 text-muted">Silakan cari dan pilih barang, lalu masukkan jumlah yang ingin dikeluarkan.</p>
@@ -62,7 +62,7 @@
 
         <!-- Kolom Samping untuk Total dan Pembayaran -->
         <div class="col-lg-4">
-            <div class="card shadow-sm" style="position: sticky; top: 20px;">
+            <div class="shadow-sm" style="position: sticky; top: 20px;">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Total Belanja</h5>
                 </div>
