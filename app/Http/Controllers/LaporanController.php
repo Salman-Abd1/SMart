@@ -7,6 +7,9 @@ use App\Models\Barang;
 use App\Models\Transaksi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Http\Controllers\Controller;
+
 
 class LaporanController extends Controller
 {
