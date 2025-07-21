@@ -42,7 +42,7 @@
 
     <div class="shadow-sm mb-4">
         <div class="card-header">
-            <i class="fas fa-chart-line me-2"></i>Grafik Penjualan (30 Hari Terakhir)
+            <i class="fas fa-chart-line me-2"></i>Grafik Penjualan
         </div>
         <div class="card-body">
             {{-- Penyesuaian agar grafik memiliki tinggi yang pas --}}
