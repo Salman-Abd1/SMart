@@ -80,6 +80,7 @@
                             <span class="input-group-text">Rp</span>
                             <input type="number" id="pembayaran" class="form-control" placeholder="0">
                         </div>
+                        <small id="pembayaran-warning" class="text-danger mt-1 d-block" style="display: none;"></small>
                     </div>
                     <div class="mb-3">
                         <label for="kembalian" class="form-label">Kembalian</label>
@@ -89,7 +90,7 @@
                         </div>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" form="transaction-form" class="btn btn-primary btn-lg">
+                        <button type="submit" form="transaction-form" id="simpan-transaksi-btn" class="btn btn-primary btn-lg" disabled>
                             <i class="fas fa-save me-2"></i>Simpan Transaksi
                         </button>
                     </div>
@@ -105,11 +106,15 @@
 document.addEventListener('DOMContentLoaded', function () {
     const barangDataEl = document.getElementById('barang-data');
     const barangs = JSON.parse(barangDataEl.dataset.barangs);
+
     const barangOptions = Object.values(barangs).map(barang => ({
         id: barang.id,
-        text: `${barang.kode_barang} - ${barang.nama_barang}`,
+        text: `${barang.kode_barang} - ${barang.nama_barang} (Stok: ${barang.stok})`,
         stok: barang.stok,
-        harga: barang.harga
+        harga: barang.harga,
+        // Data tambahan untuk custom matcher
+        kode_barang: barang.kode_barang,
+        nama_barang: barang.nama_barang
     }));
 
     const barangSelector = $('#barang-selector');
@@ -121,17 +126,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalHargaEl = $('#total-harga');
     const pembayaranEl = $('#pembayaran');
     const kembalianEl = $('#kembalian');
+    const simpanBtn = $('#simpan-transaksi-btn');
+    const pembayaranWarning = $('#pembayaran-warning');
 
     let itemIndex = 0;
 
-    // Inisialisasi Select2
+    // Inisialisasi Select2 dengan custom matcher
     barangSelector.select2({
         data: barangOptions,
         theme: 'bootstrap-5',
         placeholder: 'Ketik untuk mencari barang...',
-        width: '100%'
-    });
-    barangSelector.val(null).trigger('change'); // Reset awal
+        width: '100%',
+        // FIX: Added a custom matcher to search only by product name and code, ignoring stock.
+        matcher: function(params, data) {
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+            const term = params.term.toLowerCase();
+            const kode = data.kode_barang.toLowerCase();
+            const nama = data.nama_barang.toLowerCase();
+            if (kode.indexOf(term) > -1 || nama.indexOf(term) > -1) {
+                return data;
+            }
+            return null;
+        }
+    }).val(null).trigger('change');
 
     function validateInput() {
         const selectedBarang = barangSelector.select2('data')[0];
@@ -139,24 +161,38 @@ document.addEventListener('DOMContentLoaded', function () {
         let isValid = true;
         stockInfo.hide();
 
-        if (!selectedBarang || !selectedBarang.id) {
+        if (!selectedBarang || !selectedBarang.id || isNaN(jumlah) || jumlah <= 0) {
             isValid = false;
-        } else if (isNaN(jumlah) || jumlah <= 0) {
+        } else if (jumlah > selectedBarang.stok) {
+            stockInfo.text(`Jumlah melebihi stok yang tersedia (${selectedBarang.stok})`).show();
             isValid = false;
-        } else {
-            if (jumlah > selectedBarang.stok) {
-                stockInfo.text(`Jumlah melebihi stok yang tersedia (${selectedBarang.stok})`).show();
-                isValid = false;
-            }
         }
         addToCartBtn.prop('disabled', !isValid);
+    }
+
+    function validateSaveButton() {
+        const cartItemCount = cartItemsBody.find('tr').length;
+        const total = parseFloat(totalHargaEl.val().replace(/\./g, '')) || 0;
+        const pembayaran = parseFloat(pembayaranEl.val()) || 0;
+        let isInvalid = false;
+
+        pembayaranWarning.hide();
+
+        if (cartItemCount === 0) {
+            isInvalid = true;
+        } else if (pembayaranEl.val().trim() === '') {
+            isInvalid = true;
+        } else if (pembayaran < total) {
+            pembayaranWarning.text('Jumlah bayar kurang.').show();
+            isInvalid = true;
+        }
+        simpanBtn.prop('disabled', isInvalid);
     }
 
     function calculateTotal() {
         let total = 0;
         cartItemsBody.find('tr').each(function() {
-            const subtotal = parseFloat($(this).data('subtotal'));
-            total += subtotal;
+            total += parseFloat($(this).data('subtotal'));
         });
         totalHargaEl.val(new Intl.NumberFormat('id-ID').format(total));
         calculateChange();
@@ -167,6 +203,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const pembayaran = parseFloat(pembayaranEl.val()) || 0;
         const kembalian = pembayaran - total;
         kembalianEl.val(kembalian >= 0 ? new Intl.NumberFormat('id-ID').format(kembalian) : '0');
+        validateSaveButton();
+    }
+
+    function showSimpleNotification(message, type = 'success') {
+        const notificationId = 'simple-notification';
+        let existingNotification = document.getElementById(notificationId);
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.id = notificationId;
+        notification.className = `alert alert-${type} shadow-lg`;
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.zIndex = '2000';
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
     }
 
     addToCartBtn.on('click', function() {
@@ -174,12 +235,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const jumlah = parseInt(jumlahInput.val());
 
         if (cartItemsBody.find(`tr[data-id="${selectedBarang.id}"]`).length > 0) {
-            alert('Barang ini sudah ada di keranjang. Silakan hapus dulu jika ingin mengubah jumlah.');
+            showSimpleNotification('Barang ini sudah ada di keranjang.', 'warning');
             return;
         }
 
         const subtotal = selectedBarang.harga * jumlah;
-
         const newRow = `
             <tr data-id="${selectedBarang.id}" data-subtotal="${subtotal}">
                 <td>
@@ -192,39 +252,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
                 <td class="text-end">Rp ${new Intl.NumberFormat('id-ID').format(subtotal)}</td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-danger remove-item-btn">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <button type="button" class="btn btn-sm btn-danger remove-item-btn"><i class="fas fa-trash"></i></button>
                 </td>
-            </tr>
-        `;
+            </tr>`;
         cartItemsBody.append(newRow);
         itemIndex++;
-
         calculateTotal();
-
         barangSelector.val(null).trigger('change');
         jumlahInput.val('');
         validateInput();
     });
 
-    // Event listeners
-    // FIX: Added logic to auto-focus the quantity input after selecting a product.
-    barangSelector.on('select2:select', function(e) {
+    barangSelector.on('select2:select', () => {
         validateInput();
-        jumlahInput.focus(); // Auto-focus ke kolom jumlah
+        jumlahInput.focus();
     });
-
     barangSelector.on('select2:unselect', validateInput);
-
-    // FIX: Added event listener to focus the search box on open, fixing the double-click issue.
-    barangSelector.on('select2:open', function(e) {
-        // Timeout to allow the search field to be created before focusing
-        setTimeout(function() {
-            document.querySelector('.select2-search__field').focus();
-        }, 10);
-    });
-
+    barangSelector.on('select2:open', () => setTimeout(() => document.querySelector('.select2-search__field').focus(), 10));
     jumlahInput.on('input', validateInput);
     pembayaranEl.on('input', calculateChange);
 
@@ -232,6 +276,13 @@ document.addEventListener('DOMContentLoaded', function () {
         $(this).closest('tr').remove();
         calculateTotal();
     });
+
+    @if (session('success'))
+        showSimpleNotification("{{ session('success') }}", 'success');
+    @endif
+    @if (session('error'))
+        showSimpleNotification("{{ session('error') }}", 'danger');
+    @endif
 });
 </script>
 @endpush
