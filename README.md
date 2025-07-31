@@ -1,3 +1,4 @@
+HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -64,3 +65,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# SMart
+SMart adalah aplikasi web manajemen inventari yang dirancang untuk membantu pemilik usaha kecil dan menengah dalam mengelola stok barang, melacak transaksi penjualan dan pembelian, serta memantau kinerja bisnis lewat laporan.  Aplikasi ini dibangun menggunakan Laravel 10 dan dirancang dengan antarmuka yang bersih dan mudah digunakan.
+ cd49b45c91d1c2e84458a6c3eae86de183d7c30a
